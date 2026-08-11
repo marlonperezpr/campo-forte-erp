@@ -11,6 +11,12 @@ class InventoryMovement(BaseModel):
         OUT = "OUT", "Saída"
         ADJUSTMENT = "ADJUSTMENT", "Ajuste"
 
+    class Source(models.TextChoices):
+        PURCHASE = "PURCHASE", "Compra"
+        SALE = "SALE", "Venda"
+        ADJUSTMENT = "ADJUSTMENT", "Ajuste"
+        OTHER = "OTHER", "Outro"
+
     product = models.ForeignKey(
         Product,
         on_delete=models.PROTECT,
@@ -22,6 +28,13 @@ class InventoryMovement(BaseModel):
         max_length=20,
         choices=MovementType.choices,
         verbose_name="Tipo de movimento",
+    )
+
+    source = models.CharField(
+        max_length=20,
+        choices=Source.choices,
+        default=Source.OTHER,
+        verbose_name="Origem",
     )
 
     quantity = models.DecimalField(
