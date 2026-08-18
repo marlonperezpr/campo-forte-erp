@@ -1,4 +1,5 @@
 from django.db import models
+from django.core.validators import MinValueValidator
 from apps.core.models import BaseModel
 from apps.purchases.models.purchase import Purchase
 from apps.accounts.models.product import Product
@@ -17,11 +18,17 @@ class PurchaseItem(BaseModel):
     )
 
     quantity = models.DecimalField(
-        max_digits=10, decimal_places=3, verbose_name="Quantidade"
+        max_digits=10,
+        decimal_places=3,
+        validators=[MinValueValidator(0.001)],
+        verbose_name="Quantidade",
     )
 
     unit_cost = models.DecimalField(
-        max_digits=12, decimal_places=2, verbose_name="Custo unitário"
+        max_digits=12,
+        decimal_places=2,
+        validators=[MinValueValidator(0)],
+        verbose_name="Custo unitário",
     )
 
     total_cost = models.DecimalField(
@@ -29,8 +36,14 @@ class PurchaseItem(BaseModel):
     )
 
     def save(self, *args, **kwargs):
+        if self.purchase.status == Purchase.Status.CONFIRMED:
+            raise ValueError("Itens de uma compra confirmada não podem ser alterados.")
         self.total_cost = self.quantity * self.unit_cost
+
         super().save(*args, **kwargs)
+
+    def recalculate_total_cost(self):
+        pass
 
     class Meta:
         verbose_name = "Item de Compra"

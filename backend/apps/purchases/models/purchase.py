@@ -1,4 +1,5 @@
 from django.db import models
+from django.db.models import Sum
 
 from apps.core.models import BaseModel
 from apps.accounts.models.supplier import Supplier
@@ -33,6 +34,10 @@ class Purchase(BaseModel):
         related_name="purchases",
         verbose_name="Fornecedor",
     )
+
+    def recalculate_total(self):
+        self.total_amount = self.items.aggregate(total=Sum("total_cost"))["total"] or 0
+        self.save(update_fields=["total_amount"])
 
     class Meta:
         verbose_name = "Compra"
