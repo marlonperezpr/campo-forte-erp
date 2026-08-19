@@ -42,9 +42,6 @@ class PurchaseItem(BaseModel):
 
         super().save(*args, **kwargs)
 
-    def recalculate_total_cost(self):
-        pass
-
     class Meta:
         verbose_name = "Item de Compra"
         verbose_name_plural = "Itens de Compra"

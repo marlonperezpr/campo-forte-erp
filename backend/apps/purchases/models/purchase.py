@@ -1,10 +1,10 @@
+from datetime import date
+
 from django.db import models
 from django.db.models import Sum
 
 from apps.core.models import BaseModel
 from apps.accounts.models.supplier import Supplier
-
-from datetime import date
 
 
 class Purchase(BaseModel):
@@ -45,4 +45,4 @@ class Purchase(BaseModel):
         ordering = ["-purchase_date"]
 
     def __str__(self):
-        return f"Compra #{self.id} - {self.supplier if self.supplier else 'Sem fornecedor'} - {self.purchase_date} - "
+        return f"Compra #{self.id} - {self.supplier if self.supplier else 'Sem fornecedor'} - {self.purchase_date}"

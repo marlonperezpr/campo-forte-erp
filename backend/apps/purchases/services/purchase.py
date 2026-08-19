@@ -27,5 +27,5 @@ def confirm_purchase(purchase):
             reason=f"Compra #{purchase.id}",
         )
 
-        purchase.status = Purchase.Status.CONFIRMED
-        purchase.save(update_fields=["status"])
+    purchase.status = Purchase.Status.CONFIRMED
+    purchase.save(update_fields=["status"])

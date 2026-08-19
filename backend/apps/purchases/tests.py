@@ -7,6 +7,9 @@ from apps.accounts.models.product import Product
 from apps.accounts.models.supplier import Supplier
 from apps.purchases.models.purchase import Purchase
 from apps.purchases.models.purchase_item import PurchaseItem
+from apps.purchases.services.purchase import confirm_purchase
+from apps.inventory.models import InventoryMovement
+from apps.purchases.services.purchase import confirm_purchase
 
 
 class PurchaseItemTests(TestCase):
@@ -98,8 +101,6 @@ class PurchaseTests(TestCase):
         )
 
     def test_confirm_purchase(self):
-        from apps.inventory.models import InventoryMovement
-        from apps.purchases.services.purchase import confirm_purchase
 
         item = PurchaseItem.objects.create(
             purchase=self.purchase,
@@ -135,3 +136,34 @@ class PurchaseTests(TestCase):
                 quantity=Decimal("20.000"),
             ).exists()
         )
+
+    def test_cannot_confirm_purchase_twice(self):
+        from apps.purchases.services.purchase import confirm_purchase
+
+        PurchaseItem.objects.create(
+            purchase=self.purchase,
+            product=self.product,
+            quantity=Decimal("20.000"),
+            unit_cost=Decimal("50.00"),
+        )
+
+        confirm_purchase(self.purchase)
+
+        with self.assertRaises(ValueError):
+            confirm_purchase(self.purchase)
+
+    def test_confirmed_purchase_item_cannot_be_changed(self):
+
+        item = PurchaseItem.objects.create(
+            purchase=self.purchase,
+            product=self.product,
+            quantity=Decimal("20.000"),
+            unit_cost=Decimal("50.00"),
+        )
+
+        confirm_purchase(self.purchase)
+
+        item.quantity = Decimal("50.000")
+
+        with self.assertRaises(ValueError):
+            item.save()
