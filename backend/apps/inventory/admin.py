@@ -8,8 +8,15 @@ class InventoryMovementAdmin(admin.ModelAdmin):
     list_display = (
         "product",
         "movement_type",
+        "source",
         "quantity",
-        "reason",
-        "created_at",
         "balance_after",
+        "created_at",
     )
+
+    list_filter = (
+        "movement_type",
+        "source",
+    )
+
+    search_fields = ("product__name",)

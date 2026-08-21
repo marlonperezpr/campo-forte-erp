@@ -13,7 +13,7 @@ class Customer(BaseModel):
 
     adress = models.TextField(blank=True, verbose_name="Endereço")
 
-    notes = models.BooleanField(default=True, verbose_name="Observações")
+    notes = models.TextField(blank=True, verbose_name="Observações")
 
     active = models.BooleanField(default=True, verbose_name="Ativo")
 
